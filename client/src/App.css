@@ -1,0 +1,121 @@
+/* ============================================
+   CRITICAL FIX - STOP HORIZONTAL SCROLL
+   ============================================ */
+
+/* Lock the viewport */
+html {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+}
+
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+}
+
+/* Force all sections to stay within viewport */
+section {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Main container */
+main {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+}
+
+/* Navbar must stay within viewport */
+nav {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+}
+
+/* ============================================
+   FIX HERO SECTION DECORATIONS
+   ============================================ */
+
+/* Hero section decorative elements causing overflow */
+#home {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  position: relative;
+}
+
+/* Contain all absolute positioned decorations in hero */
+#home .absolute {
+  max-width: 100vw;
+  left: 0;
+  right: 0;
+}
+
+/* Specifically fix the decorative SVG and elements on right side */
+#home svg,
+#home .animate-float,
+#home .animate-slide-right {
+  max-width: 100%;
+}
+
+/* Prevent decorative blobs from causing overflow */
+#home > .absolute.inset-0 {
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+/* ============================================
+   ADDITIONAL SAFETY
+   ============================================ */
+
+/* All images and media stay within bounds */
+img,
+video,
+svg,
+canvas {
+  max-width: 100% !important;
+  height: auto;
+}
+
+/* Flexbox safety */
+.flex,
+.grid {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Container classes */
+.container,
+.max-w-7xl,
+.max-w-6xl,
+.max-w-5xl {
+  max-width: 100% !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* ============================================
+   MOBILE SAFETY
+   ============================================ */
+
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    overflow-x: hidden !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+}
