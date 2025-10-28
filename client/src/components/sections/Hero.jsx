@@ -35,14 +35,14 @@ const Hero = () => {
                 </span>
               </h1>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-                Full Stack Developer
+                Full Stack MERN Developer
               </h2>
             </div>
 
             {/* Description */}
             <div className="animate-fade-slide-in" style={{ animationDelay: '400ms' }}>
               <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
-                I craft <span className="text-blue-600 dark:text-blue-400 font-semibold">scalable web applications</span> using the MERN Stack,
+                I built <span className="text-blue-600 dark:text-blue-400 font-semibold">production-ready web applications</span> using the MERN Stack,
                 specializing in real-time features with <span className="text-purple-600 dark:text-purple-400 font-semibold">WebRTC & Socket.IO</span>,
                 and integrating cutting-edge <span className="text-pink-600 dark:text-pink-400 font-semibold">AI technologies</span>.
               </p>
@@ -56,12 +56,12 @@ const Hero = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 dark:from-blue-600 dark:via-purple-600 dark:to-pink-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <span className="relative flex items-center gap-2">
-                  View Projects
+                  Explore My Work
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </a>
               <a
-                href="https://drive.google.com/file/d/1t4P3xBn9qmitSq7Z5cTnhypNnlbxRYHX/view?usp=sharing"
+                href="https://drive.google.com/file/d/1PZJDugFfqL1rCzgk9ov7GBPeVwrOyS7n/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group px-8 py-4 bg-white dark:bg-gray-800 border-2 border-gray-900 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-all shadow-lg flex items-center gap-2"
