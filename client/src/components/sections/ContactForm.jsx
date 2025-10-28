@@ -19,7 +19,8 @@ const ContactForm = () => {
   const [errors, setErrors] = useState({});
 
   // API URL - Backend server URL
-  const API_URL = 'http://localhost:5000';
+  // Will use production URL once backend is deployed
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   // Validate form
   const validateForm = () => {
