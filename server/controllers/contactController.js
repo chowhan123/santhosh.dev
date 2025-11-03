@@ -1,58 +1,10 @@
-// server/controllers/contactController.js
 const Contact = require('../models/Contact');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create email transporter with better error handling
-let transporter;
-let emailEnabled = false;
+// Initialize Resend with API key from environment
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-try {
-  // Verify credentials are loaded
-  console.log('\n🔍 Checking Email Credentials:');
-  console.log('EMAIL_USER:', process.env.EMAIL_USER);
-  console.log('EMAIL_PASS exists:', !!process.env.EMAIL_PASS);
-  console.log('EMAIL_PASS length:', process.env.EMAIL_PASS?.length || 0);
-
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error('Email credentials missing in .env file');
-  }
-
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // use TLS
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-
-  // Verify transporter
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error('❌ Email transporter error:', error.message);
-      console.log('\n💡 Email will be disabled. Messages will still save to database.');
-      console.log('💡 To fix: Generate NEW Gmail App Password at:');
-      console.log('   https://myaccount.google.com/apppasswords\n');
-      emailEnabled = false;
-    } else {
-      console.log('✅ Email server is ready to send messages');
-      emailEnabled = true;
-    }
-  });
-} catch (error) {
-  console.error('❌ Email setup error:', error.message);
-  console.log('💡 Email disabled. Form will still work and save to database.\n');
-  emailEnabled = false;
-}
-
-// @desc    Submit contact form
-// @route   POST /api/contact
-// @access  Public
+// Submit contact form
 const submitContactForm = async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
@@ -93,115 +45,78 @@ const submitContactForm = async (req, res) => {
     console.log('👤 Name:', name);
     console.log('📧 Email:', email);
     console.log('📝 Subject:', subject);
-    console.log('💬 Message:', message.substring(0, 100) + (message.length > 100 ? '...' : ''));
+    console.log('💬 Message:', message.substring(0, 100));
     console.log('🕒 Time:', new Date().toLocaleString());
     console.log('🆔 ID:', contact._id);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    // Try to send emails if enabled
-    if (emailEnabled && transporter) {
+    // Try to send emails using Resend
+    if (process.env.RESEND_API_KEY) {
       try {
-        // Email to admin (you)
-        const adminMailOptions = {
-          from: process.env.EMAIL_USER,
-          to: process.env.ADMIN_EMAIL,
+        // Send email to you (admin notification)
+        const { data: adminEmail } = await resend.emails.send({
+          from: 'Portfolio <onboarding@resend.dev>', // Resend's domain
+          to: [process.env.ADMIN_EMAIL || 'santhoshnaik6929@gmail.com'],
           replyTo: email,
           subject: `🚀 Portfolio Contact: ${subject}`,
           html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
-                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-                .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3B82F6; }
-                .label { color: #6B7280; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
-                .value { color: #1F2937; font-size: 16px; margin-bottom: 15px; }
-                .message-box { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; }
-                .footer { text-align: center; color: #9CA3AF; font-size: 12px; margin-top: 30px; }
-                .button { display: inline-block; background: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 10px; }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1 style="margin: 0; font-size: 28px;">📬 New Contact Form Submission</h1>
-                </div>
-                <div class="content">
-                  <div class="info-box">
-                    <div class="label">FROM:</div>
-                    <div class="value">${name}</div>
-                    <div class="label">EMAIL:</div>
-                    <div class="value">${email}</div>
-                    <div class="label">SUBJECT:</div>
-                    <div class="value">${subject}</div>
-                  </div>
-                  <div class="message-box">
-                    <div class="label">MESSAGE:</div>
-                    <div style="color: #374151; white-space: pre-wrap;">${message}</div>
-                  </div>
-                  <div style="text-align: center; margin-top: 20px;">
-                    <a href="mailto:${email}?subject=Re: ${subject}" class="button">Reply to ${name}</a>
-                  </div>
-                </div>
-                <div class="footer">
-                  <p>Sent from your portfolio at ${new Date().toLocaleString()}</p>
-                </div>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #3B82F6;">New Contact Form Submission</h2>
+              <div style="background: #F3F4F6; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p><strong>From:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Subject:</strong> ${subject}</p>
               </div>
-            </body>
-            </html>
+              <div style="background: white; padding: 20px; border: 1px solid #E5E7EB; border-radius: 10px;">
+                <h3>Message:</h3>
+                <p style="white-space: pre-wrap;">${message}</p>
+              </div>
+              <hr style="margin: 20px 0;">
+              <p style="color: #9CA3AF; font-size: 12px;">
+                Sent from your portfolio contact form at ${new Date().toLocaleString()}
+              </p>
+            </div>
           `
-        };
+        });
 
-        // Auto-reply to sender
-        const autoReplyOptions = {
-          from: process.env.EMAIL_USER,
-          to: email,
+        // Send auto-reply to sender
+        const { data: userEmail } = await resend.emails.send({
+          from: 'Santhosh <onboarding@resend.dev>',
+          to: [email],
           subject: `✅ Thank you for contacting me, ${name}!`,
           html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
-                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1 style="margin: 0;">👋 Hi ${name}!</h1>
-                  <p style="margin: 10px 0 0 0;">Thank you for reaching out</p>
-                </div>
-                <div class="content">
-                  <p>I've received your message and I'll get back to you within 24 hours!</p>
-                  <p style="margin-top: 20px;">Best regards,<br><strong>Santhosh</strong></p>
-                </div>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #3B82F6;">Hi ${name}!</h2>
+              <p>Thank you for reaching out through my portfolio. I've received your message and will get back to you within 24 hours!</p>
+              
+              <div style="background: #EFF6FF; padding: 15px; border-radius: 8px; border-left: 4px solid #3B82F6; margin: 20px 0;">
+                <p style="margin: 0;"><strong>⏱️ Response Time:</strong> I typically reply within 24 hours</p>
               </div>
-            </body>
-            </html>
+
+              <div style="background: #F9FAFB; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="color: #6B7280; margin-bottom: 10px;"><strong>Your Message:</strong></p>
+                <p style="margin: 5px 0; color: #9CA3AF;"><strong>Subject:</strong> ${subject}</p>
+                <p style="white-space: pre-wrap; margin-top: 10px;">${message}</p>
+              </div>
+
+              <p>Best regards,<br><strong>Santhosh</strong><br>Full Stack Developer</p>
+              
+              <hr style="margin: 20px 0; border: none; border-top: 1px solid #E5E7EB;">
+              <p style="color: #9CA3AF; font-size: 12px;">📧 santhoshnaik6929@gmail.com</p>
+            </div>
           `
-        };
+        });
 
-        // Send emails
-        await Promise.all([
-          transporter.sendMail(adminMailOptions),
-          transporter.sendMail(autoReplyOptions)
-        ]);
-
-        console.log('✅ Emails sent successfully!\n');
+        console.log('✅ Emails sent successfully via Resend!');
+        console.log('   Admin Email ID:', adminEmail?.id);
+        console.log('   User Email ID:', userEmail?.id);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
       } catch (emailError) {
         console.error('⚠️ Email sending failed:', emailError.message);
         console.log('💾 Message saved to database anyway\n');
-        // Don't fail the request if email fails
       }
     } else {
-      console.log('⚠️ Email disabled - message saved to database only\n');
+      console.log('⚠️ RESEND_API_KEY not set - email disabled\n');
     }
 
     res.status(201).json({
@@ -226,9 +141,7 @@ const submitContactForm = async (req, res) => {
   }
 };
 
-// @desc    Get all contact messages
-// @route   GET /api/contact
-// @access  Public
+// Get all contact messages
 const getAllMessages = async (req, res) => {
   try {
     const messages = await Contact.find()
@@ -248,9 +161,7 @@ const getAllMessages = async (req, res) => {
   }
 };
 
-// @desc    Delete a contact message
-// @route   DELETE /api/contact/:id
-// @access  Private
+// Delete a contact message
 const deleteMessage = async (req, res) => {
   try {
     const message = await Contact.findByIdAndDelete(req.params.id);
