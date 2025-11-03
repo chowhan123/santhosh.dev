@@ -10,7 +10,7 @@
 
 **Modern Full-Stack Portfolio Website Built with MERN Stack**
 
-[🌐 Live Demo](https://santhosh-dev.vercel.app) • [📧 Contact](https://santhosh-dev.vercel.app#contact) • [💼 LinkedIn](https://linkedin.com/in/yourusername)
+[🌐 Live Demo](https://santhosh-dev.vercel.app)   • [💼 LinkedIn](https://www.linkedin.com/in/santhoshc1/)
 
 </div>
 
@@ -189,86 +189,6 @@ portfolio-website/
 
 ---
 
-## 🎨 Sections
-
-- **Hero** - Introduction with CTA buttons
-- **About Me** - Personal story and values
-- **Skills** - Technical expertise showcase
-- **Projects** - Portfolio with live demos
-- **Experience** - Professional work history
-- **Education** - Academic background
-- **Achievements** - Certifications and awards
-- **Testimonials** - Recommendations
-- **Contact** - Working form with email
-
----
-
-## 🔐 Security
-
-- Environment variables protected with `.gitignore`
-- Input validation on all forms
-- CORS properly configured
-- Error handling middleware
-- MongoDB connection security
-- No sensitive data in repository
-
----
-
-## 📈 Performance
-
-- Lighthouse Score: 90+
-- First Contentful Paint: <1.5s
-- Optimized bundle size
-- Lazy loading images
-- Code splitting
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
----
-
-## 📝 Future Enhancements
-
-- [ ] Blog section with MDX
-- [ ] Admin dashboard
-- [ ] Google Analytics integration
-- [ ] Project filtering
-- [ ] PWA features
-- [ ] Custom 404 page
-- [ ] Animation library (Framer Motion)
-- [ ] Unit testing
-
----
-
-## 🐛 Known Issues
-
-**Render Free Tier:**
-- Backend may experience cold starts (30-60s) after inactivity
-- Email service limited to 100 emails/day (Resend free tier)
-
-**Solutions:**
-- Use [UptimeRobot](https://uptimerobot.com) to keep backend active
-- Upgrade to paid tier for production use
-
----
-
-## 📄 License
-
-MIT License - Copyright (c) 2025 Santhosh
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software.
-
----
-
 ## 👨‍💻 Author
 
 **Santhosh**
@@ -321,15 +241,11 @@ Interested in working together or have questions?
 
 If you found this project helpful or interesting, please give it a ⭐ on GitHub!
 
----
-
 <div align="center">
 
 **Built with ❤️ and ☕ by Santhosh**
 
 *Making the web beautiful, one commit at a time*
-
----
 
 ![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=chowhan123.santhosh.dev)
 ![GitHub Stars](https://img.shields.io/github/stars/chowhan123/santhosh.dev?style=social)
