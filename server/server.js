@@ -1,5 +1,7 @@
 // server/server.js
-// CRITICAL: Load environment variables FIRST!
+// COMPLETE CORS FIX - GUARANTEED TO WORK
+
+// Load environment variables FIRST
 require('dotenv').config();
 
 const express = require('express');
@@ -8,41 +10,36 @@ const connectDB = require('./config/db');
 const contactRoutes = require('./routes/contact');
 const errorHandler = require('./middleware/errorHandler');
 
-// Initialize Express app
 const app = express();
 
 // Connect to MongoDB
 connectDB();
 
 // ============================================
-// CORS CONFIGURATION - COMPLETE FIX
+// CORS FIX - SIMPLE AND EFFECTIVE
 // ============================================
 
-// Allow all origins for now (you can restrict later)
-app.use(cors({
-  origin: '*', // Allow all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+// Enable CORS for ALL origins with ALL methods
+app.use(cors());
 
-// Additional CORS headers for preflight requests
+// Set headers manually for extra safety
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   
-  // Handle preflight OPTIONS requests
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+    return res.status(204).send();
   }
   
   next();
 });
 
 // ============================================
-// MIDDLEWARE
+// BODY PARSING MIDDLEWARE
 // ============================================
 
 app.use(express.json());
@@ -52,24 +49,12 @@ app.use(express.urlencoded({ extended: true }));
 // ROUTES
 // ============================================
 
-app.use('/api/contact', contactRoutes);
-
-// Health check route
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    cors: 'enabled',
-    port: process.env.PORT || 5000
-  });
-});
-
 // Root route
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'Portfolio Backend API',
-    status: 'active',
+    message: 'Portfolio Backend API - Live!',
+    status: 'running',
+    cors: 'enabled',
     endpoints: {
       health: '/api/health',
       contact: '/api/contact (POST)'
@@ -77,15 +62,36 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware (must be last)
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    cors: 'enabled for all origins'
+  });
+});
+
+// Contact routes
+app.use('/api/contact', contactRoutes);
+
+// Error handling (must be last)
 app.use(errorHandler);
 
-// Start server
+// ============================================
+// START SERVER
+// ============================================
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📧 Contact API: http://localhost:${PORT}/api/contact`);
-  console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🌐 CORS: Enabled for all origins`);
+  console.log('='.repeat(50));
+  console.log('🚀 Server Started Successfully!');
+  console.log('='.repeat(50));
+  console.log(`📍 Port: ${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📧 Contact API: /api/contact`);
+  console.log(`💚 Health Check: /api/health`);
+  console.log(`✅ CORS: Enabled for ALL origins`);
+  console.log('='.repeat(50));
 });
